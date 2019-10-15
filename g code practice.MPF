@@ -38,8 +38,7 @@ N250 M0				; Wait for command
 
 ;Laser On and Path-----------------------------------------
 
-ID = 1  $AC_TIMER [1]
-        do M50
+ID = 1  $AC_TIMER [1] DO M50
  R8 = 0
     WHILE (R8 <= R1)
     G2 X = (R9 * 2) Y = 0  Z = 0 CR = R9
