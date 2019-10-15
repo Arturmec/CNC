@@ -1,0 +1,87 @@
+;Author: 
+;Description: It writes the letters previously defined as subprograms.
+;Data: 01/11/2018
+ 
+;General Configurations-----------------------------------
+N100 $AC_TIMER[1]=0		;
+N100 G91			; Relative coordinates
+N110 G71			; ? 
+N110 G64			; Continuous path mode
+N130 M55			; Move laser mirror to home
+N140 G4F4			; Delay in seconds (4s)
+N150 M0				; Wait for command
+
+;R-Parameters---------------------------------------------
+N160 R0 = 1500			; Laser Power
+N170 R1 =			    ; First Cylinder height
+N180 R2 =		    	; First Cone height
+N190 R3 =        		; Second Cone height
+N200 R4 =			    ; Second Cylinder height
+N210 R5 = 0.5            	; 
+N220 R6 = 19.8		    ; First cone angle
+     R7 = 33.024           ; Second cone angle
+     R8 = 0               ; Counter
+     R9 =                ; First cylinder radius
+    
+
+
+     ;R15=                        ; First cone angle tangent
+     R16 = (R5 * TAN(R6))         ; First cone radius variation
+     ;R17=                     ; Second cone angle tangent
+     R18 = (R5 * TAN(R7))         ; Second cone radius variation
+
+;Process Start-up------------------------------------------
+N230 M56			; Move laser mirror to channel 1
+N240 G4F4			; Delay in seconds (4s)
+N241 M78			; Shielding Gas ON!!!!!!!!!! (gas 1 on)
+N250 M0				; Wait for command
+
+;Laser On and Path-----------------------------------------
+
+ID = 1  $AC_TIMER [1]
+        do M50
+ R8 = 0
+    WHILE (R8 <= R1)
+    G2 X = (R9 * 2) Y = 0  Z = 0 CR = R9
+    G2 X = -(R9 * 2)  Y = 0 Z = 0 CR = R9
+    G1 Z = R5
+    
+    R8 = (R8 + R5)
+    ENDWHILE 
+ R8 = 0
+    WHILE (R8 <= R2)
+    R9 = (R9 + R16)
+    G2 X = (R9 * 2) Y = 0 Z = 0 CR = R9
+    R9 = (R9 + R16)
+    G2 X = -(R9 * 2) Y = 0 Z = 0 CR = R9
+    
+    G1 Z = R5
+
+    R8 = (R8 + R5)
+    ENDWHILE
+R8 = 0
+    WHILE (R8 <= R3)
+    R9 = (R9 - R18)
+    G2 X = (R9 * 2) Y = 0   Z = 0 CR = R9
+    R9 = (R9 - R18)
+    G2 X = -(R9 * 2) Y = 0   Z = 0 CR = R9  
+    G1 Z = R5
+
+    R8 = (R8 + R5)
+    ENDWHILE
+R8 = 0
+    WHILE (R8 <= R4)
+    G2 X = (R9 * 2) Y = 0   Z = 0 CR = R9
+    G2 X = -(R9 * 2) Y = 0   Z = 0 CR = R9  
+    G1 Z = R5
+
+    R8 = (R8 + R5)
+    ENDWHILE
+
+;End of Program--------------------------------------------
+N360 G4 F3		; Delay in seconds
+N370 M79			; Shielding gas off (gas 1 off)
+N380 M55			; Move laser mirror to home
+N390 M30			; End of program
+
+ 
